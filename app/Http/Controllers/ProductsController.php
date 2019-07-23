@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\InvalidRequestException;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ProductsController extends Controller
@@ -42,5 +43,20 @@ class ProductsController extends Controller
         }
         $product = Product::with(['skus'])->find($product->id);
         return $this->setStatusCode(201)->success($product);
+    }
+
+    public function favor(Product $product){
+        $user = User::info();
+        if($user->favoriteProducts()->find($product->id)){
+           return $this->setStatusCode(201)->success('成功');
+        }
+        $user->favoriteProducts()->attach($product);
+        return $this->setStatusCode(201)->success('成功');
+    }
+
+    public function disfavor(Product $product){
+        $user = User::info();
+        $user->favoriteProducts()->detach($product);
+        return $this->setStatusCode(201)->success('成功');
     }
 }

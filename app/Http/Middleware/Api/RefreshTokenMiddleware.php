@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware\Api;
 
+use App\Exceptions\InvalidRequestException;
 use Auth;
 use Closure;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -29,6 +30,6 @@ class RefreshTokenMiddleware extends BaseMiddleware
             if ($this->auth->parseToken()->authenticate()) {
                 return $next($request);
             }
-            throw new UnauthorizedHttpException('jwt-auth', '未登录');
+        throw new InvalidRequestException('未登陆');
     }
 }
