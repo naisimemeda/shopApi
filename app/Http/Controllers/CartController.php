@@ -20,13 +20,12 @@ class CartController extends Controller
         $user = User::info();
         $skuId  = $request->input('sku_id');
         $amount = $request->input('amount');
-        $a = $user->cartItems()->get();
         if ($cart = $user->cartItems()->where('product_sku_id', $skuId)->first()) {
             $cart->update([
                'amount' =>  $cart->amount + $amount,
             ]);
         }else{
-            $cart = New CartItem;
+            $cart = new CartItem(['amount' => $amount]);
             $cart->user()->associate($user);
             $cart->productSku()->associate($skuId);
             $cart->save();
