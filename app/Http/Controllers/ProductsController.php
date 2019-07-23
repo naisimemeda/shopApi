@@ -59,4 +59,8 @@ class ProductsController extends Controller
         $user->favoriteProducts()->detach($product);
         return $this->setStatusCode(201)->success('成功');
     }
+
+    public function favorites(){
+        return $this->setStatusCode(201)->success(User::info()->favoriteProducts()->paginate(16));
+    }
 }
