@@ -33,4 +33,13 @@ class ProductsController extends Controller
         $products = $builder->paginate(16);
         return $this->setStatusCode(201)->success($products);
     }
+
+    public function show(Product $product, Request $request)
+    {
+        if (!$product->on_sale) {
+            throw new \Exception('商品未上架');
+        }
+        $product = Product::with(['skus'])->find($product->id);
+        return $this->setStatusCode(201)->success($product);
+    }
 }
