@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fdec7426aca8ff8a669242e4aa5725cf",
+    "content-hash": "d8d92df42447da4052f7a81a3b5a1b3f",
     "packages": [
         {
             "name": "caouecs/laravel-lang",
@@ -1220,6 +1220,64 @@
             ],
             "description": "Highlight PHP code in terminal",
             "time": "2018-09-29T18:48:56+00:00"
+        },
+        {
+            "name": "jxlwqq/simditor",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel-admin-extensions/simditor.git",
+                "reference": "144da645bb5d4516d14d5ac2f4f40e46d2c18889"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel-admin-extensions/simditor/zipball/144da645bb5d4516d14d5ac2f4f40e46d2c18889",
+                "reference": "144da645bb5d4516d14d5ac2f4f40e46d2c18889",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
+            },
+            "require": {
+                "encore/laravel-admin": "~1.6",
+                "php": ">=7.0.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~6.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Jxlwqq\\Simditor\\SimditorServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Jxlwqq\\Simditor\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "jxlwqq",
+                    "email": "jxlwqq@gmail.com"
+                }
+            ],
+            "description": "Simditor for Laravel-admin",
+            "homepage": "https://github.com/jxlwqq/simditor",
+            "keywords": [
+                "extension",
+                "laravel-admin"
+            ],
+            "time": "2019-07-13T14:20:41+00:00"
         },
         {
             "name": "laravel/framework",
