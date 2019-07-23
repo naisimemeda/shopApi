@@ -7,7 +7,9 @@ use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
 {
-
+    protected $dontReport = [
+        InvalidRequestException::class,
+    ];
     public function render($request, Exception $exception)
     {
         //ajax请求我们才捕捉异常
