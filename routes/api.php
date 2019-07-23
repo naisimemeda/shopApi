@@ -11,3 +11,4 @@ Route::middleware('api.refresh')->group(function () {
     Route::get('user_addresses/{user_address}', 'UserAddressesController@edit')->name('user_addresses.edit');
     Route::delete('user_addresses/{user_address}', 'UserAddressesController@destroy')->name('user_addresses.destroy');
 });
+Route::get('products', 'ProductsController@index')->name('products.index');
