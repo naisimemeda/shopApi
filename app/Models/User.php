@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Auth;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
@@ -32,7 +33,9 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->getKey();
     }
-
+    public static function info(){
+       return  Auth::guard('api')->user();
+    }
     public function getJWTCustomClaims()
     {
         return [];
