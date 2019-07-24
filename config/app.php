@@ -68,7 +68,7 @@ return [
     */
 
     'timezone' => 'UTC',
-    'order_ttl' => 1800,
+    'order_ttl' => 5,
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration
