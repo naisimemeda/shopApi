@@ -11,25 +11,19 @@ use Tymon\JWTAuth\Http\Middleware\BaseMiddleware;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
-// 注意，我们要继承的是 jwt 的 BaseMiddleware
 class RefreshTokenMiddleware extends BaseMiddleware
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Closure $next
-     *
-     * @throws \Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException
-     *
-     * @return mixed
-     */
     public function handle($request, Closure $next)
     {
             $this->checkForToken($request);
+        try {
+            // 检测用户的登录状态，如果正常则通过
             if ($this->auth->parseToken()->authenticate()) {
                 return $next($request);
             }
-        throw new InvalidRequestException('未登陆');
+            throw new UnauthorizedHttpException('jwt-auth', '未登录');
+        }catch (TokenExpiredException $exception){
+           throw new UnauthorizedHttpException('jwt-auth', $exception->getMessage());
+        }
     }
 }
