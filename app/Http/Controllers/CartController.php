@@ -7,34 +7,28 @@ use App\Models\CartItem;
 use App\Models\Product;
 use App\Models\ProductSku;
 use App\Models\User;
+use App\Services\CartService;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
+    protected $cartService;
+    public function __construct(CartService $cartService)
+    {
+        $this->cartService = $cartService;
+    }
+
     public function index(){
-        $user = User::info();
-        return $this->setStatusCode(200)->success($user->cartItems()->with(['productSku.product'])->get());
+        return $this->setStatusCode(200)->success($this->cartService->get());
     }
 
     public function add(AddCartRequest $request){
-        $user = User::info();
-        $skuId  = $request->input('sku_id');
-        $amount = $request->input('amount');
-        if ($cart = $user->cartItems()->where('product_sku_id', $skuId)->first()) {
-            $cart->update([
-               'amount' =>  $cart->amount + $amount,
-            ]);
-        }else{
-            $cart = new CartItem(['amount' => $amount]);
-            $cart->user()->associate($user);
-            $cart->productSku()->associate($skuId);
-            $cart->save();
-        }
+        $this->cartService->add($request->input('sku_id'), $request->input('amount'));
         return $this->setStatusCode(200)->success('成功');
     }
 
     public function remove(ProductSku $sku){
-        User::info()->cartItems()->where('product_sku_id', $sku->id)->delete();
+        $this->cartService->remove($sku->id);
         return $this->setStatusCode(200)->success('成功');
     }
 }
