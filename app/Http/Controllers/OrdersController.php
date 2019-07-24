@@ -26,6 +26,12 @@ class OrdersController extends Controller
         return $this->setStatusCode(200)->success($orders);
     }
 
+    public function show(Order $order)
+    {
+        $this->authorize('own', $order);
+        return $this->setStatusCode(200)->success($order->load(['items.productSku', 'items.product']));
+    }
+
     public function store(OrderRequest $request)
     {
         $user  = $request->user();
