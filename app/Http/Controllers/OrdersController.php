@@ -15,6 +15,17 @@ use Illuminate\Http\Request;
 
 class OrdersController extends Controller
 {
+    public function index(Request $request)
+    {
+        $orders = Order::query()
+            ->with(['items.product', 'items.productSku'])
+            ->where('user_id', User::info()->id)
+            ->orderBy('created_at', 'desc')
+            ->paginate();
+
+        return $this->setStatusCode(200)->success($orders);
+    }
+
     public function store(OrderRequest $request)
     {
         $user  = $request->user();
