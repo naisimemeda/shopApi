@@ -3,14 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\InvalidRequestException;
+use App\Models\Category;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\User;
+use App\Services\CategoryService;
 use Illuminate\Http\Request;
 
 class ProductsController extends Controller
 {
-    public function index(Request $request){
+    public function index(Request $request,  CategoryService $categoryService){
         $builder = Product::query()->where('on_sale', true);
         if ($search = $request->input('search', '')){
             $like = '%'.$search.'%';
@@ -33,8 +35,24 @@ class ProductsController extends Controller
                 }
             }
         }
+        if ($request->input('category_id') && $category = Category::find($request->input('category_id'))) {
+            // 如果这是一个父类目
+            if ($category->is_directory) {
+                // 则筛选出该父类目下所有子类目的商品
+                $builder->whereHas('category', function ($query) use ($category) {
+                    $query->where('path', 'like', $category->path.$category->id.'-%');
+                });
+            } else {
+                // 如果这不是一个父类目，则直接筛选此类目下的商品
+                $builder->where('category_id', $category->id);
+            }
+        }
         $products = $builder->paginate(16);
-        return $this->setStatusCode(201)->success($products);
+        return $this->setStatusCode(201)->success([
+            'products' => $products,
+            'category' =>  $category->ancestors ?? null,
+            'categoryTree' => $categoryService->getCategoryTree()
+        ]);
     }
 
     public function show(Product $product, Request $request)
