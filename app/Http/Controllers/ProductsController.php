@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\InvalidRequestException;
+use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -41,8 +42,15 @@ class ProductsController extends Controller
         if (!$product->on_sale) {
             throw new InvalidRequestException('商品未上架');
         }
+        $reviews = OrderItem::query()
+            ->with(['order.user', 'productSku']) // 预先加载关联关系
+            ->where('product_id', $product->id)
+            ->whereNotNull('reviewed_at') // 筛选出已评价的
+            ->orderBy('reviewed_at', 'desc') // 按评价时间倒序
+            ->limit(10) // 取出 10 条
+            ->get();
         $product = Product::with(['skus'])->find($product->id);
-        return $this->setStatusCode(201)->success($product);
+        return $this->setStatusCode(201)->success([$product, $reviews]);
     }
 
     public function favor(Product $product){
