@@ -11,7 +11,7 @@
  Target Server Version : 50722
  File Encoding         : 65001
 
- Date: 23/07/2019 18:01:22
+ Date: 24/07/2019 18:05:09
 */
 
 SET NAMES utf8mb4;
@@ -283,7 +283,7 @@ CREATE TABLE `migrations`  (
   `migration` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `batch` int(11) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of migrations
@@ -301,6 +301,90 @@ INSERT INTO `migrations` VALUES (10, '2019_07_23_081452_create_products_table', 
 INSERT INTO `migrations` VALUES (11, '2019_07_23_081526_create_product_skus_table', 5);
 INSERT INTO `migrations` VALUES (12, '2019_07_23_090714_create_user_favorite_products_table', 6);
 INSERT INTO `migrations` VALUES (14, '2019_07_23_092539_create_cart_items_table', 7);
+INSERT INTO `migrations` VALUES (17, '2019_07_23_133911_create_orders_table', 8);
+INSERT INTO `migrations` VALUES (18, '2019_07_23_135335_create_order_items_table', 8);
+
+-- ----------------------------
+-- Table structure for order_items
+-- ----------------------------
+DROP TABLE IF EXISTS `order_items`;
+CREATE TABLE `order_items`  (
+  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `order_id` bigint(20) UNSIGNED NOT NULL,
+  `product_id` bigint(20) UNSIGNED NOT NULL,
+  `product_sku_id` bigint(20) UNSIGNED NOT NULL,
+  `amount` int(10) UNSIGNED NOT NULL,
+  `price` decimal(10, 2) NOT NULL,
+  `rating` int(10) UNSIGNED NULL DEFAULT NULL,
+  `review` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
+  `reviewed_at` timestamp(0) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `order_items_order_id_foreign`(`order_id`) USING BTREE,
+  INDEX `order_items_product_id_foreign`(`product_id`) USING BTREE,
+  INDEX `order_items_product_sku_id_foreign`(`product_sku_id`) USING BTREE,
+  CONSTRAINT `order_items_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
+  CONSTRAINT `order_items_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
+  CONSTRAINT `order_items_ibfk_3` FOREIGN KEY (`product_sku_id`) REFERENCES `product_skus` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of order_items
+-- ----------------------------
+INSERT INTO `order_items` VALUES (1, 30, 1, 1, 1, 10.00, NULL, NULL, NULL);
+INSERT INTO `order_items` VALUES (2, 32, 1, 1, 1, 10.00, NULL, NULL, NULL);
+INSERT INTO `order_items` VALUES (3, 33, 1, 1, 1, 10.00, NULL, NULL, NULL);
+INSERT INTO `order_items` VALUES (4, 34, 1, 1, 1, 10.00, NULL, NULL, NULL);
+INSERT INTO `order_items` VALUES (5, 35, 1, 1, 1, 10.00, NULL, NULL, NULL);
+INSERT INTO `order_items` VALUES (6, 36, 1, 1, 1, 10.00, NULL, NULL, NULL);
+INSERT INTO `order_items` VALUES (7, 37, 1, 1, 1, 10.00, NULL, NULL, NULL);
+INSERT INTO `order_items` VALUES (8, 38, 1, 1, 1, 10.00, NULL, NULL, NULL);
+INSERT INTO `order_items` VALUES (9, 39, 1, 1, 1, 10.00, NULL, NULL, NULL);
+INSERT INTO `order_items` VALUES (10, 40, 1, 1, 1, 10.00, NULL, NULL, NULL);
+
+-- ----------------------------
+-- Table structure for orders
+-- ----------------------------
+DROP TABLE IF EXISTS `orders`;
+CREATE TABLE `orders`  (
+  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `no` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '订单号',
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `address` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '收货地址',
+  `total_amount` decimal(10, 2) NOT NULL,
+  `remark` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '订单备注',
+  `paid_at` datetime(0) NULL DEFAULT NULL COMMENT '支付时间',
+  `payment_method` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '支付方式',
+  `payment_no` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '支付平台订单号',
+  `refund_status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending' COMMENT '退款状态',
+  `refund_no` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '退款订单号',
+  `closed` tinyint(1) NOT NULL DEFAULT 0 COMMENT '订单是否已关闭',
+  `reviewed` tinyint(1) NOT NULL DEFAULT 0 COMMENT '订单是否已评价',
+  `ship_status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending' COMMENT '物流状态',
+  `ship_data` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '物流数据',
+  `extra` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '其他额外的数据',
+  `created_at` timestamp(0) NULL DEFAULT NULL,
+  `updated_at` timestamp(0) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `orders_no_unique`(`no`) USING BTREE,
+  UNIQUE INDEX `orders_refund_no_unique`(`refund_no`) USING BTREE,
+  INDEX `orders_user_id_foreign`(`user_id`) USING BTREE,
+  CONSTRAINT `orders_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 41 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of orders
+-- ----------------------------
+INSERT INTO `orders` VALUES (29, '20190724032150570431', 1, '{\"address\":\"\\u5317\\u4eac\\u5e02\\u5e02\\u8f96\\u533a\\u4e1c\\u57ce\\u533a\\u7b2c15\\u8857\\u9053\\u7b2c5556\\u53f7\",\"zip\":61000,\"contact_name\":\"\\u590f\\u6d77\\u6d0b\",\"contact_phone\":\"18584864076\"}', 0.00, 'sss', NULL, NULL, NULL, 'pending', NULL, 0, 0, 'pending', NULL, NULL, '2019-07-24 03:21:50', '2019-07-24 03:21:50');
+INSERT INTO `orders` VALUES (30, '20190724032328942088', 1, '{\"address\":\"\\u5317\\u4eac\\u5e02\\u5e02\\u8f96\\u533a\\u4e1c\\u57ce\\u533a\\u7b2c15\\u8857\\u9053\\u7b2c5556\\u53f7\",\"zip\":61000,\"contact_name\":\"\\u590f\\u6d77\\u6d0b\",\"contact_phone\":\"18584864076\"}', 10.00, 'sss', NULL, NULL, NULL, 'pending', NULL, 0, 0, 'pending', NULL, NULL, '2019-07-24 03:23:28', '2019-07-24 03:23:28');
+INSERT INTO `orders` VALUES (32, '20190724060803565053', 1, '{\"address\":\"\\u5317\\u4eac\\u5e02\\u5e02\\u8f96\\u533a\\u4e1c\\u57ce\\u533a\\u7b2c15\\u8857\\u9053\\u7b2c5556\\u53f7\",\"zip\":61000,\"contact_name\":\"\\u590f\\u6d77\\u6d0b\",\"contact_phone\":\"18584864076\"}', 10.00, 'sss', NULL, NULL, NULL, 'pending', NULL, 0, 0, 'pending', NULL, NULL, '2019-07-24 06:08:03', '2019-07-24 06:08:03');
+INSERT INTO `orders` VALUES (33, '20190724062949469157', 1, '{\"address\":\"\\u5317\\u4eac\\u5e02\\u5e02\\u8f96\\u533a\\u4e1c\\u57ce\\u533a\\u7b2c15\\u8857\\u9053\\u7b2c5556\\u53f7\",\"zip\":61000,\"contact_name\":\"\\u590f\\u6d77\\u6d0b\",\"contact_phone\":\"18584864076\"}', 10.00, 'sss', NULL, NULL, NULL, 'pending', NULL, 1, 0, 'pending', NULL, NULL, '2019-07-24 06:29:49', '2019-07-24 06:30:21');
+INSERT INTO `orders` VALUES (34, '20190724063042173386', 1, '{\"address\":\"\\u5317\\u4eac\\u5e02\\u5e02\\u8f96\\u533a\\u4e1c\\u57ce\\u533a\\u7b2c15\\u8857\\u9053\\u7b2c5556\\u53f7\",\"zip\":61000,\"contact_name\":\"\\u590f\\u6d77\\u6d0b\",\"contact_phone\":\"18584864076\"}', 10.00, 'sss', NULL, NULL, NULL, 'pending', NULL, 1, 0, 'pending', NULL, NULL, '2019-07-24 06:30:42', '2019-07-24 06:31:12');
+INSERT INTO `orders` VALUES (35, '20190724063126800153', 1, '{\"address\":\"\\u5317\\u4eac\\u5e02\\u5e02\\u8f96\\u533a\\u4e1c\\u57ce\\u533a\\u7b2c15\\u8857\\u9053\\u7b2c5556\\u53f7\",\"zip\":61000,\"contact_name\":\"\\u590f\\u6d77\\u6d0b\",\"contact_phone\":\"18584864076\"}', 10.00, 'sss', NULL, NULL, NULL, 'pending', NULL, 1, 0, 'pending', NULL, NULL, '2019-07-24 06:31:26', '2019-07-24 06:31:33');
+INSERT INTO `orders` VALUES (36, '20190724071339079145', 1, '{\"address\":\"\\u5317\\u4eac\\u5e02\\u5e02\\u8f96\\u533a\\u4e1c\\u57ce\\u533a\\u7b2c15\\u8857\\u9053\\u7b2c5556\\u53f7\",\"zip\":61000,\"contact_name\":\"\\u590f\\u6d77\\u6d0b\",\"contact_phone\":\"18584864076\"}', 10.00, 'sss', NULL, NULL, NULL, 'pending', NULL, 0, 0, 'pending', NULL, NULL, '2019-07-24 07:13:39', '2019-07-24 07:13:39');
+INSERT INTO `orders` VALUES (37, '20190724071413778628', 1, '{\"address\":\"\\u5317\\u4eac\\u5e02\\u5e02\\u8f96\\u533a\\u4e1c\\u57ce\\u533a\\u7b2c15\\u8857\\u9053\\u7b2c5556\\u53f7\",\"zip\":61000,\"contact_name\":\"\\u590f\\u6d77\\u6d0b\",\"contact_phone\":\"18584864076\"}', 10.00, 'sss', NULL, NULL, NULL, 'pending', NULL, 0, 0, 'pending', NULL, NULL, '2019-07-24 07:14:13', '2019-07-24 07:14:13');
+INSERT INTO `orders` VALUES (38, '20190724071522245081', 1, '{\"address\":\"\\u5317\\u4eac\\u5e02\\u5e02\\u8f96\\u533a\\u4e1c\\u57ce\\u533a\\u7b2c15\\u8857\\u9053\\u7b2c5556\\u53f7\",\"zip\":61000,\"contact_name\":\"\\u590f\\u6d77\\u6d0b\",\"contact_phone\":\"18584864076\"}', 10.00, 'sss', NULL, NULL, NULL, 'pending', NULL, 0, 0, 'pending', NULL, NULL, '2019-07-24 07:15:22', '2019-07-24 07:15:22');
+INSERT INTO `orders` VALUES (39, '20190724071611542640', 1, '{\"address\":\"\\u5317\\u4eac\\u5e02\\u5e02\\u8f96\\u533a\\u4e1c\\u57ce\\u533a\\u7b2c15\\u8857\\u9053\\u7b2c5556\\u53f7\",\"zip\":61000,\"contact_name\":\"\\u590f\\u6d77\\u6d0b\",\"contact_phone\":\"18584864076\"}', 10.00, 'sss', NULL, NULL, NULL, 'pending', NULL, 1, 0, 'pending', NULL, NULL, '2019-07-24 07:16:11', '2019-07-24 07:16:17');
+INSERT INTO `orders` VALUES (40, '20190724071703926275', 1, '{\"address\":\"\\u5317\\u4eac\\u5e02\\u5e02\\u8f96\\u533a\\u4e1c\\u57ce\\u533a\\u7b2c15\\u8857\\u9053\\u7b2c5556\\u53f7\",\"zip\":61000,\"contact_name\":\"\\u590f\\u6d77\\u6d0b\",\"contact_phone\":\"18584864076\"}', 10.00, 'sss', NULL, NULL, NULL, 'pending', NULL, 1, 0, 'pending', NULL, NULL, '2019-07-24 07:17:03', '2019-07-24 07:17:08');
 
 -- ----------------------------
 -- Table structure for password_resets
@@ -334,7 +418,7 @@ CREATE TABLE `product_skus`  (
 -- ----------------------------
 -- Records of product_skus
 -- ----------------------------
-INSERT INTO `product_skus` VALUES (1, 'IPhone X  一台', '优惠价', 10.00, 100, 1, '2019-07-23 08:37:26', '2019-07-23 08:37:26');
+INSERT INTO `product_skus` VALUES (1, 'IPhone X  一台', '优惠价', 10.00, 96, 1, '2019-07-23 08:37:26', '2019-07-24 07:17:08');
 INSERT INTO `product_skus` VALUES (2, 'voluptates', 'Et consequuntur a provident labore id sed.', 7615.00, 61006, 2, '2019-07-23 08:47:55', '2019-07-23 08:47:55');
 INSERT INTO `product_skus` VALUES (3, 'voluptatem', 'Rem earum cum eos qui exercitationem incidunt hic.', 9477.00, 28769, 2, '2019-07-23 08:47:55', '2019-07-23 08:47:55');
 INSERT INTO `product_skus` VALUES (4, 'iure', 'At eum quos aut ea.', 6093.00, 42023, 2, '2019-07-23 08:47:55', '2019-07-23 08:47:55');
@@ -509,7 +593,7 @@ INSERT INTO `user_addresses` VALUES (1, 1, '广东省', '深圳市', '福田区'
 INSERT INTO `user_addresses` VALUES (2, 1, '广东省', '深圳市', '福田区', '第70街道第480号', 296400, '常超', '18393637997', NULL, '2019-07-23 07:47:17', '2019-07-23 07:47:17');
 INSERT INTO `user_addresses` VALUES (3, 1, '北京市', '市辖区', '东城区', '第73街道第814号', 846500, '严志新', '18885300893', NULL, '2019-07-23 07:47:17', '2019-07-23 07:47:17');
 INSERT INTO `user_addresses` VALUES (5, 1, '北京市', '市辖区', '东城区', '第15街道第555号', 61000, '夏海洋', '18584864076', NULL, '2019-07-23 07:57:21', '2019-07-23 07:57:21');
-INSERT INTO `user_addresses` VALUES (6, 1, '北京市', '市辖区', '东城区', '第15街道第5556号', 61000, '夏海洋', '18584864076', NULL, '2019-07-23 07:59:23', '2019-07-23 07:59:23');
+INSERT INTO `user_addresses` VALUES (6, 1, '北京市', '市辖区', '东城区', '第15街道第5556号', 61000, '夏海洋', '18584864076', '2019-07-24 07:17:03', '2019-07-23 07:59:23', '2019-07-24 07:17:03');
 
 -- ----------------------------
 -- Table structure for user_favorite_products
