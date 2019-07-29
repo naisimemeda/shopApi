@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Auth\AuthManager;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Auth;
-use Tymon\JWTAuth\Contracts\JWTSubject;
+use Laravel\Passport\HasApiTokens;
 
-class User extends Authenticatable implements JWTSubject
+class User extends Authenticatable
 {
-    use Notifiable;
+    use HasApiTokens, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -29,16 +30,14 @@ class User extends Authenticatable implements JWTSubject
         $this->attributes['password'] = bcrypt($value);
     }
 
-    public function getJWTIdentifier()
+    public function findForPassport($username)
     {
-        return $this->getKey();
+        filter_var($username, FILTER_VALIDATE_EMAIL) ? $credentials['email'] = $username : $credentials['name'] = $username;
+        return self::where($credentials)->first();
     }
-    public static function info(){
-       return  Auth::guard('api')->user();
-    }
-    public function getJWTCustomClaims()
-    {
-        return [];
+
+    public static function info(AuthManager $auth){
+       return  $auth->guard('api')->user();
     }
 
     public function addresses(){

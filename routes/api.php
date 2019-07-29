@@ -2,6 +2,8 @@
 use Illuminate\Http\Request;
 Route::post('users','UserController@store')->name('users.store');
 Route::post('login','UserController@login')->name('users.login');
+Route::put('login/current','UserController@update')->name('users.update');
+Route::delete('login/current','UserController@logout')->name('users.logout');
 Route::get('products', 'ProductsController@index')->name('products.index');
 Route::middleware('api.refresh')->group(function () {
     Route::get('users/info','UserController@info')->name('users.info');
