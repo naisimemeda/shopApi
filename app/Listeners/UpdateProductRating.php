@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\DB;
 
 class UpdateProductRating implements ShouldQueue
 {
-
     public function handle(OrderReviewed $event)
     {
         // 通过 with 方法提前加载数据，避免 N + 1 性能问题
