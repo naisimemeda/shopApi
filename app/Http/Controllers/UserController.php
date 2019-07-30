@@ -12,15 +12,14 @@ use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use Psr\Http\Message\ServerRequestInterface;
 
-class UserController extends Controller
-{
+class UserController extends Controller {
     public function store(UserRequest $request){
         User::query()->create($request->all());
         $token = Auth::guard('api')->attempt(['name'=> $request->input('name'),'password'=>$request->password]);
         if($token) {
-            return $this->setStatusCode(201)->success([
+            return $this->setStatusCode(200)->success([
                 'name' => $request->name,
-                'token' => 'bearer ' . $token
+                'token' => 'bearer ' . $token 
             ]);
         }
         return $this->failed('注册失败',400);
@@ -47,6 +46,7 @@ class UserController extends Controller
     public function logout(AuthManager $auth){
         return $this->success($auth->guard('api')->user()->token()->revoke());
     }
+
     public function info(AuthManager $auth){
         return $this->success($auth->guard('api')->user());
     }
