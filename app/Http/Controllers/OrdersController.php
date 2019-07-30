@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\OrderReviewed;
 use App\Exceptions\InvalidRequestException;
 use App\Http\Requests\ApplyRefundRequest;
+use App\Http\Requests\CrowdFundingOrderRequest;
 use App\Http\Requests\OrderRequest;
 use App\Http\Requests\SendReviewRequest;
 use App\Jobs\CloseOrder;
@@ -16,6 +17,7 @@ use App\Models\UserAddress;
 use App\Services\CartService;
 use App\Services\OrderService;
 use Carbon\Carbon;
+use Illuminate\Auth\AuthManager;
 use Illuminate\Http\Request;
 
 class OrdersController extends Controller
@@ -105,5 +107,14 @@ class OrdersController extends Controller
         ]);
 
         return $order;
+    }
+
+    public function crowdfunding(AuthManager $auth,CrowdFundingOrderRequest $request, OrderService $orderService)
+    {
+        $user    = $auth->guard('api')->user();
+        $sku     = ProductSku::find($request->input('sku_id'));
+        $address = UserAddress::find($request->input('address_id'));
+        $amount  = $request->input('amount');
+        return $orderService->crowdfunding($user, $address, $sku, $amount);
     }
 }
