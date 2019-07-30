@@ -19,7 +19,7 @@ class UserController extends Controller {
         if($token) {
             return $this->setStatusCode(200)->success([
                 'name' => $request->name,
-                'token' => 'bearer ' . $token 
+                'token' => 'bearer ' . $token  
             ]);
         }
         return $this->failed('注册失败',400);
