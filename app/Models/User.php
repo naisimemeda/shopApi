@@ -36,8 +36,8 @@ class User extends Authenticatable
         return self::where($credentials)->first();
     }
 
-    public static function info(AuthManager $auth){
-       return  $auth->guard('api')->user();
+    public static function info(){
+       return  Auth::guard('api')->user();
     }
 
     public function addresses(){

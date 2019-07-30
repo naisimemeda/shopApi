@@ -16,7 +16,7 @@ class UserController extends Controller
 {
     public function store(UserRequest $request){
         User::query()->create($request->all());
-        $token = Auth::guard('api')->attempt(['name'=>$request->name,'password'=>$request->password]);
+        $token = Auth::guard('api')->attempt(['name'=> $request->input('name'),'password'=>$request->password]);
         if($token) {
             return $this->setStatusCode(201)->success([
                 'name' => $request->name,

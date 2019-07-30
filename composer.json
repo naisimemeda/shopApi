@@ -15,9 +15,9 @@
         "laravel/framework": "5.8.*",
         "laravel/passport": "^7.3",
         "laravel/tinker": "^1.0",
+        "moontoast/math": "^1.1",
         "overtrue/laravel-lang": "^3.0",
         "predis/predis": "^1.1",
-        "tymon/jwt-auth": "1.0.0-rc.4.1",
         "yansongda/pay": "^2.8"
     },
     "require-dev": {
