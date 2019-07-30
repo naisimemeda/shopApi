@@ -90,6 +90,7 @@ class ProductsController extends Controller
 
         // 创建一个输入框，第一个参数 title 是模型的字段名，第二个参数是该字段描述
         $form->text('title', '商品名称')->rules('required');
+        $form->hidden('type')->value(Product::TYPE_NORMAL);
         $form->select('category_id', '类目')->options(function ($id) {
             $category = Category::find($id);
             if ($category) {

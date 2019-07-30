@@ -29,7 +29,7 @@ class UserController extends Controller
     public function login(AuthorizationRequest $originRequest, AuthorizationServer $server, ServerRequestInterface $serverRequest)
     {
         try {
-            return $server->respondToAccessTokenRequest($serverRequest, new Psr7Response)->withStatus(201);
+            return $a = $server->respondToAccessTokenRequest($serverRequest, new Psr7Response);
         } catch(OAuthServerException $e) {
             return $this->success($e->getMessage());
         }
