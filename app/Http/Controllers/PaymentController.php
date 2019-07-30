@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 class PaymentController extends Controller
 {
     public function payByAlipay(Order $order, Request $request){
+        $this->authorize('own', $order);
         if ($order->paid_at || $order->closed) {
             throw new InvalidRequestException('订单状态不正确');
         }
