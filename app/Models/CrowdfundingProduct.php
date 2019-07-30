@@ -16,6 +16,8 @@ class CrowdfundingProduct extends Model
         self::STATUS_FAIL    => '众筹失败',
     ];
 
+    protected $appends = ['percent'];
+
     protected $fillable = ['total_amount', 'target_amount', 'user_count', 'status', 'end_at'];
 
     protected $dates = ['end_at'];

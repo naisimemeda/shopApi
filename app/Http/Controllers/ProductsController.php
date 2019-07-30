@@ -67,7 +67,11 @@ class ProductsController extends Controller
             ->orderBy('reviewed_at', 'desc') // 按评价时间倒序
             ->limit(10) // 取出 10 条
             ->get();
-        $product = Product::with(['skus'])->find($product->id);
+        if($product->type == Product::TYPE_CROWDFUNDING){
+            $product = $product->with(['skus', 'crowdfunding'])->find($product->id);
+        }else{
+            $product = $product->with(['skus'])->find($product->id);
+        }
         return $this->setStatusCode(201)->success([$product, $reviews]);
     }
 
