@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\InvalidRequestException;
 use App\Models\Category;
+use App\Models\History;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\User;
 use App\Services\CategoryService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ProductsController extends Controller
@@ -59,6 +61,21 @@ class ProductsController extends Controller
     {
         if (!$product->on_sale) {
             throw new InvalidRequestException('商品未上架');
+        }
+        // 已登录 添加历史记录
+        if ($user = User::info()){
+            $is_history = $user->history()->where([
+                ['historytable_type', Product::class],
+                ['historytable_id', $product->id]
+            ])->first();
+            if ($is_history){
+                $is_history->update(['updated_at' => Carbon::now()]);
+            }else {
+                $history = new History();
+                $history->historytable()->associate($product);
+                $history->user()->associate($user);
+                $history->save();
+            }
         }
         $reviews = OrderItem::query()
             ->with(['order.user', 'productSku']) // 预先加载关联关系

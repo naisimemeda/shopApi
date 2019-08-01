@@ -43,4 +43,9 @@ class Product extends Model
     public function crowdfunding() {
         return $this->hasOne(CrowdfundingProduct::class);
     }
+
+    public function history()
+    {
+        return $this->morphMany(History::class, 'historytable');
+    }
 }

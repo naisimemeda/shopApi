@@ -29,6 +29,7 @@ Route::middleware('api.refresh')->group(function () {
     Route::post('crowdfunding_orders', 'OrdersController@crowdfunding')->name('crowdfunding_orders.store');
     Route::get('afterPaid/{order}', 'PaymentController@afterPaid')->name('PaymentController.afterPaid');
     Route::post('payment/{order}/installment', 'PaymentController@payByInstallment')->name('payment.installment');
+    Route::get('history', 'HistoryController@index')->name('history.index');
 });
 Route::get('products/{product}', 'ProductsController@show')->name('products.show');
 Route::get('payment/alipay/return', 'PaymentController@alipayReturn')->name('payment.alipay.return');
