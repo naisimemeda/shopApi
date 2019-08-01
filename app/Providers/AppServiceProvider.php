@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Order;
 use Illuminate\Support\ServiceProvider;
 use Monolog\Logger;
 use Yansongda\Pay\Pay;
@@ -29,6 +30,10 @@ class AppServiceProvider extends ServiceProvider
             }
             // 调用 Yansongda\Pay 来创建一个支付宝支付对象
             return Pay::alipay($config);
+        });
+
+        $this->app->singleton('sss', function () {
+            return New Sss(Order::find(51));
         });
     }
 
