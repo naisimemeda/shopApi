@@ -18,7 +18,7 @@ class UserController extends Controller
         User::query()->create($request->all());
         $token = Auth::guard('api')->attempt(['name'=> $request->input('name'),'password'=>$request->password]);
         if($token) {
-            return $this->setStatusCode(201)->success([
+            return $this->setStatusCode(201)->success([ 
                 'name' => $request->name,
                 'token' => 'bearer ' . $token
             ]);
